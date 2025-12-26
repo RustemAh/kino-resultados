@@ -23,7 +23,7 @@ body {
 
 .card {
   background: #fff;
-  max-width: 600px;
+  max-width: 650px;
   margin: 15px auto;
   padding: 15px;
   border-radius: 10px;
@@ -45,3 +45,4 @@ body {
   justify-content: center;
   font-weight: bold;
 }
+
