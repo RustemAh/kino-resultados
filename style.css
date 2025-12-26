@@ -1,0 +1,47 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+}
+
+.header, .footer {
+  text-align: center;
+  background: #fff;
+  padding: 20px;
+}
+
+.buscador {
+  text-align: center;
+  padding: 15px;
+}
+
+.buscador input {
+  width: 90%;
+  max-width: 400px;
+  padding: 10px;
+}
+
+.card {
+  background: #fff;
+  max-width: 600px;
+  margin: 15px auto;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.bolas {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.bola {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: gold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
