@@ -1,26 +1,54 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Resultados KINO Chile</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Resultados KINO Chile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<header class="header">
-  <h1>Resultados KINO</h1>
-</header>
+<!-- BANNER OFICIAL -->
+<section class="banner-oficial">
+  <div class="banner-top">
+    <img
+      class="banner-logo"
+      src="https://www.loteria.cl/LoteriaWeb/content/img/resultados/kino/subproductos/kino2.png"
+      alt="Kino"
+    />
+    <div class="banner-info">
+      <span id="bannerTexto">Próximo Sorteo</span>
+    </div>
+  </div>
 
-<section class="buscador">
-  <input id="buscar" placeholder="Buscar sorteo o fecha">
+  <div class="banner-monto">
+    <span class="monto" id="bannerMonto">$0</span>
+    <span class="millones">Millones</span>
+  </div>
+
+  <p class="banner-descripcion">
+    Total estimado a repartir entre todas las categorías y juegos adicionales Kino
+  </p>
 </section>
 
+<!-- SELECTORES -->
+<section class="buscador">
+  <select id="selectSorteo">
+    <option value="">Selecciona sorteo</option>
+  </select>
+
+  <select id="selectFecha">
+    <option value="">Selecciona fecha</option>
+  </select>
+</section>
+
+<!-- RESULTADOS -->
 <main id="resultados"></main>
 
-<footer class="footer">
-  <p>Resultados oficiales de KINO – Fuente: Lotería de Concepción</p>
-  <p>Desarrollado por <strong>El Epicentro Labs</strong></p>
+<footer>
+  <p>
+    ADVERTENCIA: Epicentrochile.com no es responsable en caso de que esta noticia contenga algún error u omisión. Los resultados oficiales son los que Lotería entrega a sus Agentes a través de los terminales de juegos instalados en las Agencias Oficiales.
+  </p>
 </footer>
 
 <script src="script.js"></script>
