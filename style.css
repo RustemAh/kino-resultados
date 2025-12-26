@@ -121,3 +121,19 @@ footer {
   color: #666;
   padding: 20px;
 }
+.cartones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.carton {
+  background: #f1f1f1;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-weight: bold;
+  font-size: 13px;
+  color: #333;
+}
