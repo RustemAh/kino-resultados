@@ -4,35 +4,102 @@ body {
   background: #f4f6f8;
 }
 
-.header, .footer {
+/* ===============================
+   BANNER OFICIAL KINO
+=============================== */
+.banner-oficial {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 25px;
+  border-radius: 14px;
+  background: linear-gradient(90deg, #ff2f5f, #e91e9a);
+  color: #fff;
   text-align: center;
-  background: #fff;
-  padding: 20px;
 }
 
+.banner-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  background: #0b4aa6;
+  padding: 8px 15px;
+  border-radius: 20px;
+  width: fit-content;
+  margin: 0 auto 20px auto;
+}
+
+.banner-logo {
+  height: 36px;
+}
+
+.banner-info {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.banner-monto .monto {
+  font-size: 64px;
+  font-weight: bold;
+}
+
+.banner-monto .millones {
+  font-size: 32px;
+  font-weight: bold;
+  margin-left: 8px;
+}
+
+.banner-descripcion {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+/* ===============================
+   SELECTORES
+=============================== */
 .buscador {
   text-align: center;
   padding: 15px;
 }
 
-.buscador input {
-  width: 90%;
-  max-width: 400px;
+.buscador select {
   padding: 10px;
+  font-size: 14px;
+  margin: 5px;
+  min-width: 180px;
 }
 
+/* ===============================
+   RESULTADOS
+=============================== */
 .card {
-  background: #fff;
-  max-width: 650px;
-  margin: 15px auto;
-  padding: 15px;
-  border-radius: 10px;
+  background: #ffffff;
+  max-width: 750px;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+h2 {
+  margin: 0 0 5px 0;
+}
+
+h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+h3 img {
+  height: 28px;
 }
 
 .bolas {
   display: flex;
-  gap: 8px;
   flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 5px;
 }
 
 .bola {
@@ -40,9 +107,17 @@ body {
   height: 42px;
   border-radius: 50%;
   background: gold;
+  color: #000;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
+  font-size: 15px;
 }
 
+footer {
+  text-align: center;
+  font-size: 12px;
+  color: #666;
+  padding: 20px;
+}
