@@ -46,10 +46,16 @@ fetch(URL)
             kino: { nums: parseNums(get("kino")), logo: colMap.kino?.logo },
             rekino: { nums: parseNums(get("rekino")), logo: colMap.rekino?.logo },
             requete_kino: { nums: parseNums(get("requete_kino")), logo: colMap.requete_kino?.logo },
-            premios_especiales: { nums: parseNums(get("premios_especiales")), logo: colMap.premios_especiales?.logo },
+            premios_especiales: {
+              nums: parseNums(get("premios_especiales")),
+              logo: colMap.premios_especiales?.logo
+            },
             chao_jefe_2m: { nums: parseNums(get("chao_jefe_2m")), logo: colMap.chao_jefe_2m?.logo },
             chao_jefe_3m: { nums: parseNums(get("chao_jefe_3m")), logo: colMap.chao_jefe_3m?.logo },
-            super_combo_marraqueta: { nums: parseNums(get("super_combo_marraqueta")), logo: colMap.super_combo_marraqueta?.logo }
+            super_combo_marraqueta: {
+              nums: parseNums(get("super_combo_marraqueta")),
+              logo: colMap.super_combo_marraqueta?.logo
+            }
           }
         };
       })
@@ -77,7 +83,11 @@ fetch(URL)
 // ===============================
 function parseNums(v) {
   if (!v) return [];
-  return v.toString().split(",").map(n => parseInt(n.trim())).filter(Boolean);
+  return v
+    .toString()
+    .split(/[\n,]+/)     // ✔ comas y saltos de línea
+    .map(n => parseInt(n.trim(), 10))
+    .filter(n => !isNaN(n));
 }
 
 function formatearFecha(f) {
@@ -135,9 +145,16 @@ function render(data) {
 
     if (s.numero_carton) {
       html += `
-        <h3><img src="https://www.loteria.cl/LoteriaWeb/content/img/resultados/kino/subproductos/pc.png"> Premios al Número de Cartón</h3>
+        <h3>
+          <img src="https://www.loteria.cl/LoteriaWeb/content/img/resultados/kino/subproductos/pc.png">
+          Premios al Número de Cartón
+        </h3>
         <div class="cartones">
-          ${s.numero_carton.split(",").map(c => `<span class="carton">${c.trim()}</span>`).join("")}
+          ${s.numero_carton
+            .toString()
+            .split(",")
+            .map(c => `<span class="carton">${c.trim()}</span>`)
+            .join("")}
         </div>
       `;
     }
