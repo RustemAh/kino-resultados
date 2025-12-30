@@ -34,7 +34,6 @@ fetch(URL)
     const data = json.table.rows
       .map(row => {
         const get = key => row.c[colMap[key]?.index]?.v || "";
-
         if (!get("sorteo")) return null;
 
         return {
@@ -85,9 +84,17 @@ function parseNums(v) {
   if (!v) return [];
   return v
     .toString()
-    .split(/[\n,]+/)     // ✔ comas y saltos de línea
+    .split(/[\n,]+/)
     .map(n => parseInt(n.trim(), 10))
     .filter(n => !isNaN(n));
+}
+
+function chunkArray(arr, size) {
+  const chunks = [];
+  for (let i = 0; i < arr.length; i += size) {
+    chunks.push(arr.slice(i, i + size));
+  }
+  return chunks;
 }
 
 function formatearFecha(f) {
@@ -132,15 +139,22 @@ function render(data) {
     for (const [key, juego] of Object.entries(s.juegos)) {
       if (!juego.nums.length) continue;
 
+      const grupos = chunkArray(juego.nums, 14);
+
       html += `
         <h3>
           <img src="${juego.logo}">
           ${nombreCategoria(key)}
         </h3>
-        <div class="bolas">
-          ${juego.nums.map(n => `<div class="bola">${n}</div>`).join("")}
-        </div>
       `;
+
+      grupos.forEach(grupo => {
+        html += `
+          <div class="bolas grupo">
+            ${grupo.map(n => `<div class="bola">${n}</div>`).join("")}
+          </div>
+        `;
+      });
     }
 
     if (s.numero_carton) {
