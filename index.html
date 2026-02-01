@@ -8,14 +8,9 @@
 </head>
 <body>
 
-<!-- BANNER OFICIAL -->
 <section class="banner-oficial">
   <div class="banner-top">
-    <img
-      class="banner-logo"
-      src="https://www.loteria.cl/LoteriaWeb/content/img/resultados/kino/subproductos/kino2.png"
-      alt="Kino"
-    />
+    <img class="banner-logo" src="https://www.loteria.cl/LoteriaWeb/content/img/resultados/kino/subproductos/kino2.png" alt="Kino" />
     <div class="banner-info">
       <span id="bannerTexto">Próximo Sorteo</span>
     </div>
@@ -31,7 +26,6 @@
   </p>
 </section>
 
-<!-- SELECTORES -->
 <section class="buscador">
   <select id="selectSorteo">
     <option value="">Selecciona sorteo</option>
@@ -40,14 +34,24 @@
   <select id="selectFecha">
     <option value="">Selecciona fecha</option>
   </select>
+
+  <button id="btnEmbed" type="button" disabled>Mostrar embed</button>
 </section>
 
-<!-- RESULTADOS -->
+<section class="embed" id="embedBox" hidden>
+  <p class="embed-title"><strong>Código embed (iframe):</strong></p>
+  <textarea id="embedCode" readonly></textarea>
+
+  <div class="embed-actions">
+    <button id="copyEmbed" type="button">Copiar</button>
+  </div>
+</section>
+
 <main id="resultados"></main>
 
 <footer>
   <p>
-    ADVERTENCIA: Epicentrochile.com no es responsable en caso de que esta noticia contenga algún error u omisión. Los resultados oficiales son los que Lotería entrega a sus Agentes a través de los terminales de juegos instalados en las Agencias Oficiales.
+    ADVERTENCIA: Epicentrochile.com no es responsable en caso de que esta noticia contenga algún error u omisión. Los resultados oficiales son los que Lotería entrega a sus Agentes.
   </p>
 </footer>
 
