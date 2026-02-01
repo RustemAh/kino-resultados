@@ -137,3 +137,32 @@ footer {
   font-size: 13px;
   color: #333;
 }
+
+/* ✅ Soporte para Caja de Embed (igual que Loto) */
+.embed {
+  background: #eee;
+  padding: 15px;
+  max-width: 750px;
+  margin: 10px auto;
+  border-radius: 8px;
+}
+#embedCode {
+  width: 100%;
+  height: 80px;
+  font-family: monospace;
+  font-size: 12px;
+}
+
+/* ✅ MODO IFRAME */
+body.is-embed {
+  background: transparent;
+}
+body.is-embed .banner-oficial {
+  margin: 5px auto;
+  padding: 15px;
+}
+body.is-embed footer, 
+body.is-embed #btnEmbed, 
+body.is-embed .embed {
+  display: none;
+}
