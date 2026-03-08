@@ -2,59 +2,389 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Resultados KINO Chile</title>
+  <title>Resultados Kino - Epicentro Chile</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ===============================
+       ESTILOS GENERALES
+    =============================== */
+    body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6f8; color: #333; }
+
+    /* BANNER SUPERIOR */
+    .banner-oficial {
+      max-width: 900px; margin: 20px auto; padding: 30px 20px; border-radius: 16px;
+      background: linear-gradient(135deg, #ff2f5f 0%, #d50057 100%);
+      color: #fff; text-align: center; box-shadow: 0 10px 25px rgba(233, 30, 154, 0.3);
+    }
+    .banner-top {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      background: rgba(0, 0, 0, 0.2); padding: 8px 20px; border-radius: 50px; margin-bottom: 10px; backdrop-filter: blur(5px);
+    }
+    .banner-logo { height: 30px; }
+    .banner-info { font-size: 16px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+    
+    .banner-monto { margin: 10px 0; }
+    .pozo-label { display: block; font-size: 0.9rem; text-transform: uppercase; opacity: 0.9; margin-bottom: 5px; font-weight: 600; letter-spacing: 1px; }
+    .banner-monto .monto { font-size: 3.5rem; font-weight: 800; line-height: 1; text-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+    .banner-monto .millones { font-size: 1.5rem; font-weight: 600; opacity: 0.9; display: block; margin-top: 5px; }
+    .banner-descripcion { font-size: 14px; opacity: 0.85; margin-top: 15px; font-style: italic; }
+
+    /* CONTROLES */
+    .buscador { text-align: center; padding: 20px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+    .buscador select {
+      padding: 12px 16px; font-size: 15px; border: 1px solid #ddd; border-radius: 8px; min-width: 200px; background: white; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    #btnEmbed {
+      padding: 12px 20px; background: #333; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: background 0.2s;
+    }
+    #btnEmbed:hover { background: #000; }
+
+    /* EMBED BOX */
+    .embed-box {
+      max-width: 750px; margin: 0 auto 20px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center;
+    }
+    #embedCode {
+      width: 100%; height: 80px; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-family: monospace; font-size: 12px; margin-bottom: 10px; resize: none;
+    }
+    #copyEmbed {
+      background: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px;
+    }
+
+    /* RESULTADOS */
+    .card {
+      background: #ffffff; max-width: 750px; margin: 20px auto; padding: 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+    .card-header { border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 20px; text-align: center; }
+    .card-header h2 { margin: 0; color: #d50057; font-size: 1.8rem; }
+    .card-header small { color: #888; font-size: 0.9rem; display: block; margin-top: 5px; }
+
+    .juego-bloque { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px dashed #eee; }
+    .juego-bloque:last-child { border: none; margin-bottom: 0; padding-bottom: 0; }
+    
+    h3 { display: flex; align-items: center; gap: 10px; margin: 0 0 15px 0; color: #444; font-size: 1.1rem; }
+    h3 img { height: 35px; width: auto; object-fit: contain; }
+
+    .bolas { display: flex; flex-wrap: wrap; gap: 8px; }
+    .bola {
+      width: 40px; height: 40px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #ffd700, #ffca28); color: #333; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 2px solid #fff;
+    }
+    .grupo { margin-bottom: 8px; width: 100%; }
+
+    /* CARTONES */
+    .cartones { display: flex; flex-wrap: wrap; gap: 8px; }
+    .carton {
+      background: #f1f3f5; color: #495057; padding: 6px 12px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; border: 1px solid #dee2e6;
+    }
+
+    /* MENSAJE NO DISPONIBLE */
+    .no-resultados {
+      text-align: center; padding: 30px; background: #fff3f3; border-radius: 8px; border: 1px dashed #ffbbc9; color: #d50057; margin-top: 10px;
+    }
+    .no-resultados strong { display: block; font-size: 1.2rem; margin-bottom: 5px; }
+
+    /* BANNER AUTOPROMOCIÓN */
+    .banner-promo {
+      max-width: 500px; margin: 30px auto 10px; text-align: center; padding: 0 15px;
+    }
+    .banner-promo a {
+      display: inline-block; transition: transform 0.2s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 12px; overflow: hidden; line-height: 0;
+    }
+    .banner-promo a:hover {
+      transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .banner-promo img { max-width: 100%; height: auto; }
+
+    /* FOOTER & EMBED */
+    footer { text-align: center; padding: 40px 20px; color: #999; font-size: 0.8rem; max-width: 700px; margin: 0 auto; }
+    body.is-embed { background: transparent; }
+    body.is-embed .banner-oficial { margin: 0; border-radius: 0; padding: 15px; }
+    body.is-embed .buscador, body.is-embed footer, body.is-embed .embed-box { display: none; }
+    body.is-embed .card { margin: 10px auto; box-shadow: none; border: 1px solid #eee; }
+  </style>
 </head>
 <body>
 
-<section class="banner-oficial">
-  <div class="banner-top">
-    <img class="banner-logo" src="https://www.epicentrochile.com/wp-content/uploads/2026/02/kino2.png" alt="Kino" />
-    <div class="banner-info">
-      <span id="bannerTexto">Próximo Sorteo</span>
+  <section class="banner-oficial">
+    <div class="banner-top">
+      <img class="banner-logo" src="https://www.epicentrochile.com/wp-content/uploads/2026/02/kino2.png" alt="Kino" />
+      <div class="banner-info"><span id="bannerTexto">Cargando...</span></div>
     </div>
-  </div>
+    
+    <div class="banner-monto">
+      <span class="pozo-label">Pozo a repartir</span>
+      <span class="monto" id="bannerMonto"></span>
+      <span class="millones">Millones</span>
+    </div>
+    <p class="banner-descripcion">Total estimado a repartir entre todas las categorías</p>
+  </section>
 
-  <div class="banner-monto">
-    <span class="monto" id="bannerMonto">$0</span>
-    <span class="millones">Millones</span>
-  </div>
+  <section class="buscador">
+    <select id="selectSorteo"><option value="">Cargando...</option></select>
+    <select id="selectFecha"><option value="">Fecha</option></select>
+    <button id="btnEmbed">Código Embed</button>
+  </section>
 
-  <p class="banner-descripcion">
-    Total estimado a repartir entre todas las categorías y juegos adicionales Kino
-  </p>
-</section>
+  <section class="embed-box" id="embedBox" hidden>
+    <p><strong>Copia este código para insertar en otra web:</strong></p>
+    <textarea id="embedCode" readonly></textarea>
+    <button id="copyEmbed">Copiar Código</button>
+  </section>
 
-<section class="buscador">
-  <select id="selectSorteo">
-    <option value="">Selecciona sorteo</option>
-  </select>
+  <main id="resultados"></main>
 
-  <select id="selectFecha">
-    <option value="">Selecciona fecha</option>
-  </select>
+  <section class="banner-promo">
+    <a href="http://www.epicentroradio.com/?utm_source=kino_resultados&utm_medium=banner_inferior&utm_campaign=cobertura_nacional" target="_blank">
+        <img src="https://primerosenlaquinta.cl/wp-content/uploads/2026/03/ChileybotanasconamarilloenfondorojoparaNegociodeSnacksLogo-ezgif.com-optimize.gif" alt="Escucha Epicentro Radio" width="300" height="250">
+    </a>
+  </section>
 
-  <button id="btnEmbed" type="button" disabled>Mostrar embed</button>
-</section>
+  <footer>
+    <p>ADVERTENCIA: Epicentrochile.com no es responsable en caso de que esta noticia contenga algún error u omisión. Los resultados oficiales son los que Lotería entrega a sus Agentes.</p>
+  </footer>
 
-<section class="embed" id="embedBox" hidden>
-  <p class="embed-title"><strong>Código embed (iframe):</strong></p>
-  <textarea id="embedCode" readonly></textarea>
+  <script>
+    const SHEET_ID = "1a4XxgaYrixLeSQ0EOnI4thHA-_075uVAxQvvGlGhxQA";
+    const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
-  <div class="embed-actions">
-    <button id="copyEmbed" type="button">Copiar</button>
-  </div>
-</section>
+    const contenedor = document.getElementById("resultados");
+    const selectSorteo = document.getElementById("selectSorteo");
+    const selectFecha = document.getElementById("selectFecha");
+    const bannerTexto = document.getElementById("bannerTexto");
+    const bannerMonto = document.getElementById("bannerMonto");
+    const btnEmbed = document.getElementById("btnEmbed");
+    const embedBox = document.getElementById("embedBox");
+    const embedCode = document.getElementById("embedCode");
+    const copyEmbed = document.getElementById("copyEmbed");
 
-<main id="resultados"></main>
+    let ALL_DATA = [];
 
-<footer>
-  <p>
-    ADVERTENCIA: Epicentrochile.com no es responsable en caso de que esta noticia contenga algún error u omisión. Los resultados oficiales son los que Lotería entrega a sus Agentes.
-  </p>
-</footer>
+    // MAPA DE IMÁGENES FIJO (Para asegurar que siempre se vean)
+    const IMAGENES = {
+        kino: "https://www.epicentrochile.com/wp-content/uploads/2026/02/kino2.png",
+        rekino: "https://www.epicentrochile.com/wp-content/uploads/2026/02/rekino.png",
+        requete_kino: "https://www.epicentrochile.com/wp-content/uploads/2026/02/requetekino.png",
+        premios_especiales: "https://www.epicentrochile.com/wp-content/uploads/2026/02/pe.png",
+        chao_jefe_2m: "https://www.epicentrochile.com/wp-content/uploads/2026/02/cj2.png",
+        chao_jefe_3m: "https://www.epicentrochile.com/wp-content/uploads/2026/02/cj3.png",
+        super_combo_marraqueta: "https://www.epicentrochile.com/wp-content/uploads/2026/02/supermarraqueta.png",
+        numero_carton: "https://www.epicentrochile.com/wp-content/uploads/2026/02/pc.png"
+    };
 
-<script src="script.js"></script>
+    // --- UI Embed ---
+    if(btnEmbed) btnEmbed.addEventListener("click", () => embedBox.hidden = !embedBox.hidden);
+    if(copyEmbed) {
+      copyEmbed.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(embedCode.value);
+          const original = copyEmbed.textContent; copyEmbed.textContent = "¡Copiado!";
+          setTimeout(() => copyEmbed.textContent = original, 1500);
+        } catch { embedCode.select(); }
+      });
+    }
+
+    // --- Carga de Datos ---
+    fetch(URL)
+      .then(r => r.text())
+      .then(text => {
+        const match = text.match(/setResponse\(([\s\S]*?)\);?\s*$/);
+        const json = match ? JSON.parse(match[1]) : JSON.parse(text.substring(47).slice(0, -2));
+
+        // PROCESAMIENTO POR ÍNDICES FIJOS (Solución Definitiva)
+        // Basado en tu archivo kino_resultados.xlsx:
+        // Col 0: Sorteo | Col 1: Fecha | Col 2: Monto | Col 3: Kino | Col 4: Rekino 
+        // Col 5: Requete | Col 6: Premios Esp | Col 7: Chao 2M | Col 8: Chao 3M 
+        // Col 9: Combo | Col 10: N° Carton
+        
+        ALL_DATA = json.table.rows.map(row => {
+          // Función auxiliar para leer por índice numérico
+          const getByIndex = (i) => (row.c[i] && row.c[i].v !== null) ? row.c[i].v : "";
+
+          const sorteoVal = getByIndex(0);
+          
+          // Validamos que sea un número de sorteo válido
+          if (!sorteoVal || typeof sorteoVal !== 'number') return null;
+
+          return {
+            sorteo: sorteoVal.toString(),
+            fecha: formatearFecha(getByIndex(1)),
+            monto: normalizarMonto(getByIndex(2)),
+            numero_carton: getByIndex(10),
+            juegos: {
+              kino:               { nums: parseNums(getByIndex(3)), key: "kino" },
+              rekino:             { nums: parseNums(getByIndex(4)), key: "rekino" },
+              requete_kino:       { nums: parseNums(getByIndex(5)), key: "requete_kino" },
+              premios_especiales: { nums: parseNums(getByIndex(6)), key: "premios_especiales" },
+              chao_jefe_2m:       { nums: parseNums(getByIndex(7)), key: "chao_jefe_2m" },
+              chao_jefe_3m:       { nums: parseNums(getByIndex(8)), key: "chao_jefe_3m" },
+              super_combo:        { nums: parseNums(getByIndex(9)), key: "super_combo_marraqueta" }
+            }
+          };
+        })
+        .filter(Boolean)
+        .sort((a, b) => Number(b.sorteo) - Number(a.sorteo));
+
+        if (ALL_DATA.length === 0) { mostrarErrorGlobal(); return; }
+
+        cargarSelectores(ALL_DATA);
+
+        // Lógica de visualización inicial
+        const params = new URLSearchParams(location.search);
+        if (params.get("embed") === "1") document.body.classList.add("is-embed");
+        
+        const sorteoParam = params.get("sorteo");
+        if (sorteoParam) {
+           selectSorteo.value = sorteoParam;
+           aplicarFiltros();
+        } else {
+           // Cargar el último sorteo que tenga DATOS (para saltar el 3198 que está vacío)
+           cargarUltimoConDatos();
+        }
+      })
+      .catch(e => { console.error("Error:", e); mostrarErrorGlobal(); });
+
+    function mostrarErrorGlobal() {
+       contenedor.innerHTML = `<div class="no-resultados"><strong>No se pudieron cargar los datos</strong>Reintente.</div>`;
+    }
+
+    // Busca el primer sorteo hacia atrás que tenga números ganadores
+    function cargarUltimoConDatos() {
+        let sorteoElegido = ALL_DATA[0]; 
+        
+        // Buscamos el primero que tenga al menos 1 número en el Kino
+        const sorteoReal = ALL_DATA.find(s => s.juegos.kino.nums.length > 0);
+        if (sorteoReal) sorteoElegido = sorteoReal;
+
+        // Sincronizar selectores
+        if(sorteoElegido) {
+            selectSorteo.value = sorteoElegido.sorteo;
+            selectFecha.value = sorteoElegido.fecha;
+            render([sorteoElegido]);
+            renderBanner(sorteoElegido);
+            actualizarEmbed(sorteoElegido.sorteo);
+        }
+    }
+
+    function aplicarFiltros() {
+      const sVal = selectSorteo.value;
+      const fVal = selectFecha.value;
+      const filtrado = ALL_DATA.filter(s => (!sVal || s.sorteo === sVal) && (!fVal || s.fecha === fVal));
+      
+      if (filtrado.length) {
+        render(filtrado);
+        renderBanner(filtrado[0]);
+        actualizarEmbed(filtrado[0].sorteo);
+        const url = new URL(window.location);
+        url.searchParams.set("sorteo", filtrado[0].sorteo);
+        if(url.searchParams.get("embed") !== "1") url.searchParams.delete("embed");
+        history.replaceState({}, "", url);
+        if (sVal) selectFecha.value = filtrado[0].fecha;
+      } else {
+        contenedor.innerHTML = `<div class="no-resultados">No se encontraron resultados.</div>`;
+      }
+    }
+
+    function actualizarEmbed(sorteo) {
+      const base = window.location.href.split('?')[0];
+      embedCode.value = `<iframe src="${base}?sorteo=${sorteo}&embed=1" width="100%" height="1300" style="border:0;border-radius:12px;overflow:hidden" loading="lazy"></iframe>`;
+      btnEmbed.disabled = false;
+    }
+
+    function parseNums(v) {
+      if (!v) return [];
+      const str = v.toString().trim();
+      if (!str) return [];
+      return str.split(/[\n,]+/).map(n => n.trim()).filter(n => n !== "");
+    }
+
+    function chunkArray(arr, size) {
+      const chunks = [];
+      for (let i = 0; i < arr.length; i += size) chunks.push(arr.slice(i, i + size));
+      return chunks;
+    }
+
+    function formatearFecha(f) {
+      if (!f) return "";
+      if (typeof f === "string" && f.startsWith("Date")) {
+        const c = f.match(/\d+/g);
+        return c ? `${c[2].padStart(2,'0')}-${(parseInt(c[1])+1).toString().padStart(2,'0')}-${c[0]}` : f;
+      }
+      return f;
+    }
+
+    function normalizarMonto(m) {
+      if (!m) return 0;
+      return Number(m.toString().replace(/[^\d]/g, "")) || 0;
+    }
+
+    function nombreCategoria(key) {
+      const map = {
+        kino: "Kino", rekino: "Rekino", requete_kino: "Requete Kino",
+        premios_especiales: "Premios Especiales", chao_jefe_2m: "Chao Jefe $2M",
+        chao_jefe_3m: "Chao Jefe $3M", super_combo_marraqueta: "Super Combo Marraqueta"
+      };
+      return map[key] || key.toUpperCase();
+    }
+
+    function cargarSelectores(data) {
+      selectSorteo.innerHTML = `<option value="">Selecciona sorteo</option>` + 
+        data.map(s => `<option value="${s.sorteo}">${s.sorteo}</option>`).join("");
+      const fechas = [...new Set(data.map(s => s.fecha))];
+      selectFecha.innerHTML = `<option value="">Selecciona fecha</option>` + 
+        fechas.map(f => `<option value="${f}">${f}</option>`).join("");
+      selectSorteo.onchange = selectFecha.onchange = aplicarFiltros;
+    }
+
+    function render(data) {
+      contenedor.innerHTML = "";
+      data.forEach(s => {
+        let html = `<div class="card">
+          <div class="card-header">
+            <h2>Sorteo KINO ${s.sorteo}</h2>
+            <small>${s.fecha}</small>
+          </div>`;
+          
+        let juegosMostrados = 0;
+
+        for (const [key, juego] of Object.entries(s.juegos)) {
+          if (!juego.nums.length) continue; 
+          juegosMostrados++;
+          
+          const logoUrl = IMAGENES[juego.key];
+          const grupos = chunkArray(juego.nums, 14);
+          
+          html += `<div class="juego-bloque">
+            <h3>${logoUrl ? `<img src="${logoUrl}">` : '🔹'} ${nombreCategoria(juego.key)}</h3>`;
+          grupos.forEach(grupo => {
+            html += `<div class="bolas grupo">${grupo.map(n => `<div class="bola">${n}</div>`).join("")}</div>`;
+          });
+          html += `</div>`;
+        }
+
+        if (s.numero_carton) {
+           juegosMostrados++;
+           const logoPC = IMAGENES["numero_carton"];
+           html += `<div class="juego-bloque">
+             <h3><img src="${logoPC}"> Premios al N° de Cartón</h3>
+             <div class="cartones">${s.numero_carton.toString().split(",").map(c => `<span class="carton">${c.trim()}</span>`).join("")}</div>
+           </div>`;
+        }
+
+        if (juegosMostrados === 0) {
+            html += `<div class="no-resultados">
+                <strong>Resultados no disponibles aún.</strong>
+                Consulte más tarde.
+            </div>`;
+        }
+        
+        html += `</div>`;
+        contenedor.innerHTML += html;
+      });
+    }
+
+    function renderBanner(s) {
+      bannerTexto.textContent = `Resultados Sorteo ${s.fecha}`;
+      bannerMonto.textContent = "$" + s.monto.toLocaleString("es-CL");
+    }
+  </script>
 </body>
 </html>
