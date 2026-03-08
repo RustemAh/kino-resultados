@@ -233,11 +233,12 @@
            selectSorteo.value = sorteoParam;
            aplicarFiltros();
         } else {
-           cargarUltimoConDatos();
+           // CAMBIO CLAVE: Cargar SIEMPRE el primero de la lista (el 3198)
+           // aunque no tenga bolitas, para mostrar su fecha y pozo.
+           cargarUltimo();
         }
       })
       .catch(e => { 
-          // AQUÍ SE MUESTRA EL MENSAJE AMIGABLE SIEMPRE QUE HAYA ERROR TÉCNICO
           console.error("Error técnico:", e); 
           mostrarAvisoManual(); 
       });
@@ -253,19 +254,21 @@
        bannerMonto.textContent = "---";
     }
 
-    function cargarUltimoConDatos() {
-        let sorteoElegido = ALL_DATA[0]; 
-        const sorteoReal = ALL_DATA.find(s => s.juegos.kino.nums.length > 0);
+    // CAMBIO CLAVE: Cargar el primero tal cual viene
+    function cargarUltimo() {
+        let sorteoElegido = ALL_DATA[0]; // Toma el más reciente (ej. 3198)
         
-        if (sorteoReal) {
-            sorteoElegido = sorteoReal;
-        }
-
+        // Sincronizar selectores
         selectSorteo.value = sorteoElegido.sorteo;
         selectFecha.value = sorteoElegido.fecha;
         
-        render([sorteoElegido]);
+        // Renderizar banner (Sorteo + Fecha + Pozo)
         renderBanner(sorteoElegido);
+
+        // Renderizar tarjeta (Mostrará "No disponible" si no tiene bolitas)
+        render([sorteoElegido]);
+        
+        // Embed automático
         actualizarEmbed(null);
     }
 
@@ -313,6 +316,12 @@
 
     function formatearFecha(f) {
       if (!f) return "";
+      // Si viene como string YYYY-MM-DD (del CSV directo) lo invertimos
+      if (typeof f === "string" && f.match(/^\d{4}-\d{2}-\d{2}$/)) {
+         const parts = f.split("-");
+         return `${parts[2]}-${parts[1]}-${parts[0]}`; // DD-MM-YYYY
+      }
+      // Si viene como Date(Y,M,D) (de Google Viz)
       if (typeof f === "string" && f.startsWith("Date")) {
         const c = f.match(/\d+/g);
         return c ? `${c[2].padStart(2,'0')}-${(parseInt(c[1])+1).toString().padStart(2,'0')}-${c[0]}` : f;
@@ -376,6 +385,7 @@
            </div>`;
         }
 
+        // CAMBIO: Si no hay juegos, NO mostrar la tarjeta vacía, sino el mensaje
         if (juegosMostrados === 0) {
            html += `
              <div class="no-resultados">
@@ -390,6 +400,8 @@
     }
 
     function renderBanner(s) {
+      // AQUÍ ESTÁ EL CAMBIO VISUAL:
+      // Muestra "Resultados Sorteo FECHA" incluso si no hay bolitas
       bannerTexto.textContent = `Resultados Sorteo ${s.fecha}`;
       bannerMonto.textContent = "$" + s.monto.toLocaleString("es-CL");
     }
