@@ -80,7 +80,7 @@
     .no-resultados {
       text-align: center; padding: 30px; background: #fff3f3; border-radius: 8px; border: 1px dashed #ffbbc9; color: #d50057; margin-top: 10px;
     }
-    .no-resultados strong { display: block; font-size: 1.2rem; margin-bottom: 5px; }
+    .no-resultados strong { display: block; font-size: 1.2rem; margin-bottom: 5px; color: #d50057; }
 
     /* BANNER AUTOPROMOCIÓN */
     .banner-promo {
@@ -146,7 +146,7 @@
     const SHEET_ID = "1a4XxgaYrixLeSQ0EOnI4thHA-_075uVAxQvvGlGhxQA";
     const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
     
-    // --- URL FIJA DE PRODUCCIÓN (Evita errores de 404 en el embed) ---
+    // --- URL FIJA DE PRODUCCIÓN ---
     const BASE_URL = "https://rustemah.github.io/kino-resultados/";
 
     const contenedor = document.getElementById("resultados");
@@ -218,7 +218,8 @@
         .sort((a, b) => Number(b.sorteo) - Number(a.sorteo));
 
         if (ALL_DATA.length === 0) { 
-            mostrarErrorGlobal("No se encontraron sorteos válidos."); 
+            // AQUÍ: Si no hay datos, mostramos el mensaje que pediste
+            mostrarAvisoManual(); 
             return; 
         }
 
@@ -236,10 +237,21 @@
            cargarUltimoConDatos();
         }
       })
-      .catch(e => { console.error(e); mostrarErrorGlobal("Error de conexión con Google Sheets."); });
+      .catch(e => { 
+          // AQUÍ: Si falla la conexión, TAMBIÉN mostramos el mensaje que pediste
+          console.error(e); 
+          mostrarAvisoManual(); 
+      });
 
-    function mostrarErrorGlobal(msg) {
-       contenedor.innerHTML = `<div class="no-resultados"><strong>${msg}</strong>Intente más tarde.</div>`;
+    // --- FUNCIÓN UNIFICADA DE MENSAJE "NO DISPONIBLE" ---
+    function mostrarAvisoManual() {
+       contenedor.innerHTML = `
+         <div class="no-resultados">
+            <strong>Resultados no disponibles aún.</strong>
+            Consulte más tarde.
+         </div>`;
+       bannerTexto.textContent = "Sin Información";
+       bannerMonto.textContent = "---";
     }
 
     function cargarUltimoConDatos() {
@@ -248,6 +260,10 @@
         
         if (sorteoReal) {
             sorteoElegido = sorteoReal;
+        } else {
+            // Si todos están vacíos, mostrar el aviso
+            mostrarAvisoManual();
+            return;
         }
 
         selectSorteo.value = sorteoElegido.sorteo;
@@ -275,17 +291,14 @@
         
         if (sVal) selectFecha.value = filtrado[0].fecha;
       } else {
-        contenedor.innerHTML = `<div class="no-resultados">No se encontraron resultados.</div>`;
+        mostrarAvisoManual();
       }
     }
 
-    // --- GENERADOR DE EMBED CORREGIDO ---
     function actualizarEmbed(sorteoId) {
-      // Usamos la URL BASE FIJA
       const src = sorteoId 
         ? `${BASE_URL}?sorteo=${sorteoId}&embed=1` 
         : `${BASE_URL}?embed=1`;
-
       embedCode.value = `<iframe src="${src}" width="100%" height="1300" style="border:0;border-radius:12px;overflow:hidden" loading="lazy"></iframe>`;
       btnEmbed.disabled = false;
     }
@@ -369,10 +382,13 @@
         }
 
         if (juegosMostrados === 0) {
-            html += `<div class="no-resultados">
+           // Si el sorteo existe pero no tiene juegos, es porque está "vacío" (futuro)
+           // Mostramos el aviso manual
+           html += `
+             <div class="no-resultados">
                 <strong>Resultados no disponibles aún.</strong>
                 Consulte más tarde.
-            </div>`;
+             </div>`;
         }
         
         html += `</div>`;
