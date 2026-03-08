@@ -145,6 +145,9 @@
   <script>
     const SHEET_ID = "1a4XxgaYrixLeSQ0EOnI4thHA-_075uVAxQvvGlGhxQA";
     const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+    
+    // --- URL FIJA DE PRODUCCIÓN (Evita errores de 404 en el embed) ---
+    const BASE_URL = "https://rustemah.github.io/kino-resultados/";
 
     const contenedor = document.getElementById("resultados");
     const selectSorteo = document.getElementById("selectSorteo");
@@ -158,7 +161,6 @@
 
     let ALL_DATA = [];
 
-    // MAPA DE IMÁGENES FIJO (Para asegurar que siempre se vean)
     const IMAGENES = {
         kino: "https://www.epicentrochile.com/wp-content/uploads/2026/02/kino2.png",
         rekino: "https://www.epicentrochile.com/wp-content/uploads/2026/02/rekino.png",
@@ -170,7 +172,7 @@
         numero_carton: "https://www.epicentrochile.com/wp-content/uploads/2026/02/pc.png"
     };
 
-    // --- UI Embed ---
+    // UI Embed
     if(btnEmbed) btnEmbed.addEventListener("click", () => embedBox.hidden = !embedBox.hidden);
     if(copyEmbed) {
       copyEmbed.addEventListener("click", async () => {
@@ -182,86 +184,78 @@
       });
     }
 
-    // --- Carga de Datos ---
+    // Carga de Datos
     fetch(URL)
       .then(r => r.text())
       .then(text => {
         const match = text.match(/setResponse\(([\s\S]*?)\);?\s*$/);
         const json = match ? JSON.parse(match[1]) : JSON.parse(text.substring(47).slice(0, -2));
 
-        // PROCESAMIENTO POR ÍNDICES FIJOS (Solución Definitiva)
-        // Basado en tu archivo kino_resultados.xlsx:
-        // Col 0: Sorteo | Col 1: Fecha | Col 2: Monto | Col 3: Kino | Col 4: Rekino 
-        // Col 5: Requete | Col 6: Premios Esp | Col 7: Chao 2M | Col 8: Chao 3M 
-        // Col 9: Combo | Col 10: N° Carton
-        
+        // PARSEO POR ÍNDICES FIJOS
         ALL_DATA = json.table.rows.map(row => {
-          // Función auxiliar para leer por índice numérico
-          const getByIndex = (i) => (row.c[i] && row.c[i].v !== null) ? row.c[i].v : "";
-
-          const sorteoVal = getByIndex(0);
+          const v = (idx) => (row.c[idx] && row.c[idx].v !== null) ? row.c[idx].v : "";
           
-          // Validamos que sea un número de sorteo válido
-          if (!sorteoVal || typeof sorteoVal !== 'number') return null;
+          let sorteoRaw = v(0);
+          if (!sorteoRaw || isNaN(Number(sorteoRaw))) return null;
 
           return {
-            sorteo: sorteoVal.toString(),
-            fecha: formatearFecha(getByIndex(1)),
-            monto: normalizarMonto(getByIndex(2)),
-            numero_carton: getByIndex(10),
+            sorteo: sorteoRaw.toString(),
+            fecha: formatearFecha(v(1)),
+            monto: normalizarMonto(v(2)),
+            numero_carton: v(10),
             juegos: {
-              kino:               { nums: parseNums(getByIndex(3)), key: "kino" },
-              rekino:             { nums: parseNums(getByIndex(4)), key: "rekino" },
-              requete_kino:       { nums: parseNums(getByIndex(5)), key: "requete_kino" },
-              premios_especiales: { nums: parseNums(getByIndex(6)), key: "premios_especiales" },
-              chao_jefe_2m:       { nums: parseNums(getByIndex(7)), key: "chao_jefe_2m" },
-              chao_jefe_3m:       { nums: parseNums(getByIndex(8)), key: "chao_jefe_3m" },
-              super_combo:        { nums: parseNums(getByIndex(9)), key: "super_combo_marraqueta" }
+              kino:               { nums: parseNums(v(3)), key: "kino" },
+              rekino:             { nums: parseNums(v(4)), key: "rekino" },
+              requete_kino:       { nums: parseNums(v(5)), key: "requete_kino" },
+              premios_especiales: { nums: parseNums(v(6)), key: "premios_especiales" },
+              chao_jefe_2m:       { nums: parseNums(v(7)), key: "chao_jefe_2m" },
+              chao_jefe_3m:       { nums: parseNums(v(8)), key: "chao_jefe_3m" },
+              super_combo:        { nums: parseNums(v(9)), key: "super_combo_marraqueta" }
             }
           };
         })
         .filter(Boolean)
         .sort((a, b) => Number(b.sorteo) - Number(a.sorteo));
 
-        if (ALL_DATA.length === 0) { mostrarErrorGlobal(); return; }
+        if (ALL_DATA.length === 0) { 
+            mostrarErrorGlobal("No se encontraron sorteos válidos."); 
+            return; 
+        }
 
         cargarSelectores(ALL_DATA);
 
-        // Lógica de visualización inicial
         const params = new URLSearchParams(location.search);
         if (params.get("embed") === "1") document.body.classList.add("is-embed");
         
         const sorteoParam = params.get("sorteo");
+        
         if (sorteoParam) {
            selectSorteo.value = sorteoParam;
            aplicarFiltros();
         } else {
-           // Cargar el último sorteo que tenga DATOS (para saltar el 3198 que está vacío)
            cargarUltimoConDatos();
         }
       })
-      .catch(e => { console.error("Error:", e); mostrarErrorGlobal(); });
+      .catch(e => { console.error(e); mostrarErrorGlobal("Error de conexión con Google Sheets."); });
 
-    function mostrarErrorGlobal() {
-       contenedor.innerHTML = `<div class="no-resultados"><strong>No se pudieron cargar los datos</strong>Reintente.</div>`;
+    function mostrarErrorGlobal(msg) {
+       contenedor.innerHTML = `<div class="no-resultados"><strong>${msg}</strong>Intente más tarde.</div>`;
     }
 
-    // Busca el primer sorteo hacia atrás que tenga números ganadores
     function cargarUltimoConDatos() {
         let sorteoElegido = ALL_DATA[0]; 
-        
-        // Buscamos el primero que tenga al menos 1 número en el Kino
         const sorteoReal = ALL_DATA.find(s => s.juegos.kino.nums.length > 0);
-        if (sorteoReal) sorteoElegido = sorteoReal;
-
-        // Sincronizar selectores
-        if(sorteoElegido) {
-            selectSorteo.value = sorteoElegido.sorteo;
-            selectFecha.value = sorteoElegido.fecha;
-            render([sorteoElegido]);
-            renderBanner(sorteoElegido);
-            actualizarEmbed(sorteoElegido.sorteo);
+        
+        if (sorteoReal) {
+            sorteoElegido = sorteoReal;
         }
+
+        selectSorteo.value = sorteoElegido.sorteo;
+        selectFecha.value = sorteoElegido.fecha;
+        
+        render([sorteoElegido]);
+        renderBanner(sorteoElegido);
+        actualizarEmbed(null);
     }
 
     function aplicarFiltros() {
@@ -273,19 +267,26 @@
         render(filtrado);
         renderBanner(filtrado[0]);
         actualizarEmbed(filtrado[0].sorteo);
+        
         const url = new URL(window.location);
         url.searchParams.set("sorteo", filtrado[0].sorteo);
         if(url.searchParams.get("embed") !== "1") url.searchParams.delete("embed");
         history.replaceState({}, "", url);
+        
         if (sVal) selectFecha.value = filtrado[0].fecha;
       } else {
         contenedor.innerHTML = `<div class="no-resultados">No se encontraron resultados.</div>`;
       }
     }
 
-    function actualizarEmbed(sorteo) {
-      const base = window.location.href.split('?')[0];
-      embedCode.value = `<iframe src="${base}?sorteo=${sorteo}&embed=1" width="100%" height="1300" style="border:0;border-radius:12px;overflow:hidden" loading="lazy"></iframe>`;
+    // --- GENERADOR DE EMBED CORREGIDO ---
+    function actualizarEmbed(sorteoId) {
+      // Usamos la URL BASE FIJA
+      const src = sorteoId 
+        ? `${BASE_URL}?sorteo=${sorteoId}&embed=1` 
+        : `${BASE_URL}?embed=1`;
+
+      embedCode.value = `<iframe src="${src}" width="100%" height="1300" style="border:0;border-radius:12px;overflow:hidden" loading="lazy"></iframe>`;
       btnEmbed.disabled = false;
     }
 
@@ -348,10 +349,8 @@
         for (const [key, juego] of Object.entries(s.juegos)) {
           if (!juego.nums.length) continue; 
           juegosMostrados++;
-          
           const logoUrl = IMAGENES[juego.key];
           const grupos = chunkArray(juego.nums, 14);
-          
           html += `<div class="juego-bloque">
             <h3>${logoUrl ? `<img src="${logoUrl}">` : '🔹'} ${nombreCategoria(juego.key)}</h3>`;
           grupos.forEach(grupo => {
