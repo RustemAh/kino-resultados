@@ -218,7 +218,6 @@
         .sort((a, b) => Number(b.sorteo) - Number(a.sorteo));
 
         if (ALL_DATA.length === 0) { 
-            // AQUÍ: Si no hay datos, mostramos el mensaje que pediste
             mostrarAvisoManual(); 
             return; 
         }
@@ -238,8 +237,8 @@
         }
       })
       .catch(e => { 
-          // AQUÍ: Si falla la conexión, TAMBIÉN mostramos el mensaje que pediste
-          console.error(e); 
+          // AQUÍ SE MUESTRA EL MENSAJE AMIGABLE SIEMPRE QUE HAYA ERROR TÉCNICO
+          console.error("Error técnico:", e); 
           mostrarAvisoManual(); 
       });
 
@@ -260,10 +259,6 @@
         
         if (sorteoReal) {
             sorteoElegido = sorteoReal;
-        } else {
-            // Si todos están vacíos, mostrar el aviso
-            mostrarAvisoManual();
-            return;
         }
 
         selectSorteo.value = sorteoElegido.sorteo;
@@ -382,8 +377,6 @@
         }
 
         if (juegosMostrados === 0) {
-           // Si el sorteo existe pero no tiene juegos, es porque está "vacío" (futuro)
-           // Mostramos el aviso manual
            html += `
              <div class="no-resultados">
                 <strong>Resultados no disponibles aún.</strong>
