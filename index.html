@@ -1,410 +1,200 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>Resultados Kino - Epicentro Chile</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    /* ===============================
-       ESTILOS GENERALES
-    =============================== */
-    body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6f8; color: #333; }
+    <meta charset="UTF-8" />
+    <title>Resultados Kino - Epicentro Chile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        :root { --azul: #003b8e; --rojo: #e20613; --dorado: #ffd400; --fondo: #f4f6f8; }
+        body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--fondo); color: #333; }
 
-    /* BANNER SUPERIOR */
-    .banner-oficial {
-      max-width: 900px; margin: 20px auto; padding: 30px 20px; border-radius: 16px;
-      background: linear-gradient(135deg, #ff2f5f 0%, #d50057 100%);
-      color: #fff; text-align: center; box-shadow: 0 10px 25px rgba(233, 30, 154, 0.3);
-    }
-    .banner-top {
-      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-      background: rgba(0, 0, 0, 0.2); padding: 8px 20px; border-radius: 50px; margin-bottom: 10px; backdrop-filter: blur(5px);
-    }
-    .banner-logo { height: 30px; }
-    .banner-info { font-size: 16px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
-    
-    .banner-monto { margin: 10px 0; }
-    .pozo-label { display: block; font-size: 0.9rem; text-transform: uppercase; opacity: 0.9; margin-bottom: 5px; font-weight: 600; letter-spacing: 1px; }
-    .banner-monto .monto { font-size: 3.5rem; font-weight: 800; line-height: 1; text-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-    .banner-monto .millones { font-size: 1.5rem; font-weight: 600; opacity: 0.9; display: block; margin-top: 5px; }
-    .banner-descripcion { font-size: 14px; opacity: 0.85; margin-top: 15px; font-style: italic; }
+        /* BANNER SUPERIOR */
+        .banner-oficial {
+            max-width: 900px; margin: 20px auto; padding: 30px 20px; border-radius: 16px;
+            background: linear-gradient(135deg, #ff2f5f 0%, #d50057 100%);
+            color: #fff; text-align: center; box-shadow: 0 10px 25px rgba(233, 30, 154, 0.3);
+        }
+        .banner-top {
+            display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+            background: rgba(0, 0, 0, 0.2); padding: 8px 20px; border-radius: 50px; margin-bottom: 10px; backdrop-filter: blur(5px);
+        }
+        .banner-logo { height: 30px; }
+        .banner-info { font-size: 16px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+        
+        .banner-monto { margin: 10px 0; }
+        .pozo-label { display: block; font-size: 0.9rem; text-transform: uppercase; opacity: 0.9; margin-bottom: 5px; font-weight: 600; letter-spacing: 1px; }
+        .banner-monto .monto { font-size: 3.5rem; font-weight: 800; line-height: 1; text-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .banner-monto .millones { font-size: 1.5rem; font-weight: 600; opacity: 0.9; display: block; margin-top: 5px; }
 
-    /* CONTROLES */
-    .buscador { text-align: center; padding: 20px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-    .buscador select {
-      padding: 12px 16px; font-size: 15px; border: 1px solid #ddd; border-radius: 8px; min-width: 200px; background: white; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    }
-    #btnEmbed {
-      padding: 12px 20px; background: #333; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: background 0.2s;
-    }
-    #btnEmbed:hover { background: #000; }
+        /* CONTROLES */
+        .admin-controls { display: flex; gap: 10px; justify-content: center; padding: 20px; flex-wrap: wrap; }
+        select { padding: 12px 16px; font-size: 15px; border: 1px solid #ddd; border-radius: 8px; min-width: 180px; background: white; cursor: pointer; }
+        .btn-copy { padding: 12px 20px; background: #333; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .btn-copy:hover { background: #000; }
 
-    /* EMBED BOX */
-    .embed-box {
-      max-width: 750px; margin: 0 auto 20px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center;
-    }
-    #embedCode {
-      width: 100%; height: 80px; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-family: monospace; font-size: 12px; margin-bottom: 10px; resize: none;
-    }
-    #copyEmbed {
-      background: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px;
-    }
+        /* RESULTADOS */
+        .card { background: #ffffff; max-width: 750px; margin: 20px auto; padding: 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .card-header { border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 20px; text-align: center; }
+        .card-header h2 { margin: 0; color: #d50057; font-size: 1.8rem; }
 
-    /* RESULTADOS */
-    .card {
-      background: #ffffff; max-width: 750px; margin: 20px auto; padding: 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-    }
-    .card-header { border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 20px; text-align: center; }
-    .card-header h2 { margin: 0; color: #d50057; font-size: 1.8rem; }
-    .card-header small { color: #888; font-size: 0.9rem; display: block; margin-top: 5px; }
+        .juego-bloque { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px dashed #eee; }
+        .juego-bloque:last-child { border: none; }
+        
+        h3 { display: flex; align-items: center; gap: 10px; margin: 0 0 15px 0; color: #444; font-size: 1.1rem; }
+        h3 img { height: 35px; width: auto; object-fit: contain; }
 
-    .juego-bloque { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px dashed #eee; }
-    .juego-bloque:last-child { border: none; margin-bottom: 0; padding-bottom: 0; }
-    
-    h3 { display: flex; align-items: center; gap: 10px; margin: 0 0 15px 0; color: #444; font-size: 1.1rem; }
-    h3 img { height: 35px; width: auto; object-fit: contain; }
+        .bolas { display: flex; flex-wrap: wrap; gap: 8px; }
+        .bola {
+            width: 40px; height: 40px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #ffd700, #ffca28); color: #333; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 2px solid #fff;
+        }
 
-    .bolas { display: flex; flex-wrap: wrap; gap: 8px; }
-    .bola {
-      width: 40px; height: 40px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #ffd700, #ffca28); color: #333; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 2px solid #fff;
-    }
-    .grupo { margin-bottom: 8px; width: 100%; }
+        .no-resultados { text-align: center; padding: 30px; background: #fff3f3; border-radius: 8px; border: 1px dashed #ffbbc9; color: #d50057; margin-top: 10px; }
 
-    /* CARTONES */
-    .cartones { display: flex; flex-wrap: wrap; gap: 8px; }
-    .carton {
-      background: #f1f3f5; color: #495057; padding: 6px 12px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; border: 1px solid #dee2e6;
-    }
+        /* PUBLICIDAD */
+        .banner-promo { max-width: 500px; margin: 30px auto; text-align: center; }
+        .banner-promo img { max-width: 100%; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: 0.3s; }
+        .banner-promo img:hover { transform: translateY(-3px); }
 
-    /* MENSAJE NO DISPONIBLE */
-    .no-resultados {
-      text-align: center; padding: 30px; background: #fff3f3; border-radius: 8px; border: 1px dashed #ffbbc9; color: #d50057; margin-top: 10px;
-    }
-    .no-resultados strong { display: block; font-size: 1.2rem; margin-bottom: 5px; color: #d50057; }
-
-    /* BANNER AUTOPROMOCIÓN */
-    .banner-promo {
-      max-width: 500px; margin: 30px auto 10px; text-align: center; padding: 0 15px;
-    }
-    .banner-promo a {
-      display: inline-block; transition: transform 0.2s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 12px; overflow: hidden; line-height: 0;
-    }
-    .banner-promo a:hover {
-      transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    }
-    .banner-promo img { max-width: 100%; height: auto; }
-
-    /* FOOTER & EMBED */
-    footer { text-align: center; padding: 40px 20px; color: #999; font-size: 0.8rem; max-width: 700px; margin: 0 auto; }
-    body.is-embed { background: transparent; }
-    body.is-embed .banner-oficial { margin: 0; border-radius: 0; padding: 15px; }
-    body.is-embed .buscador, body.is-embed footer, body.is-embed .embed-box { display: none; }
-    body.is-embed .card { margin: 10px auto; box-shadow: none; border: 1px solid #eee; }
-  </style>
+        /* MODO EMBED */
+        body.is-embed .admin-controls, body.is-embed footer { display: none !important; }
+        body.is-embed .banner-oficial { margin: 0; border-radius: 0; }
+        body.is-embed .card { margin: 10px auto; box-shadow: none; border: 1px solid #eee; }
+    </style>
 </head>
 <body>
 
-  <section class="banner-oficial">
-    <div class="banner-top">
-      <img class="banner-logo" src="https://www.epicentrochile.com/wp-content/uploads/2026/02/kino2.png" alt="Kino" />
-      <div class="banner-info"><span id="bannerTexto">Cargando...</span></div>
-    </div>
-    
-    <div class="banner-monto">
-      <span class="pozo-label">Pozo a repartir</span>
-      <span class="monto" id="bannerMonto"></span>
-      <span class="millones">Millones</span>
-    </div>
-    <p class="banner-descripcion">Total estimado a repartir entre todas las categorías</p>
-  </section>
+    <section class="banner-oficial">
+        <div class="banner-top">
+            <img class="banner-logo" src="https://www.epicentrochile.com/wp-content/uploads/2026/02/kino2.png" alt="Kino" />
+            <div class="banner-info"><span id="bannerTexto">Cargando...</span></div>
+        </div>
+        <div class="banner-monto">
+            <span class="pozo-label">Pozo a repartir</span>
+            <span class="monto" id="bannerMonto">---</span>
+            <span class="millones">Millones</span>
+        </div>
+    </section>
 
-  <section class="buscador">
-    <select id="selectSorteo"><option value="">Cargando...</option></select>
-    <select id="selectFecha"><option value="">Fecha</option></select>
-    <button id="btnEmbed">Código Embed</button>
-  </section>
+    <section class="admin-controls">
+        <select id="selectSorteo"><option value="">Sorteo</option></select>
+        <select id="selectFecha"><option value="">Fecha</option></select>
+        <button class="btn-copy" onclick="copiarEmbed()">Copiar Embed</button>
+    </section>
 
-  <section class="embed-box" id="embedBox" hidden>
-    <p><strong>Copia este código para insertar en otra web:</strong></p>
-    <textarea id="embedCode" readonly></textarea>
-    <button id="copyEmbed">Copiar Código</button>
-  </section>
+    <main id="resultados"></main>
 
-  <main id="resultados"></main>
+    <section class="banner-promo">
+        <a href="http://www.epicentroradio.com/?utm_source=kino_resultados&utm_medium=banner_inferior&utm_campaign=cobertura_nacional" target="_blank">
+            <img src="https://primerosenlaquinta.cl/wp-content/uploads/2026/03/ChileybotanasconamarilloenfondorojoparaNegociodeSnacksLogo-ezgif.com-optimize.gif" alt="Escucha Epicentro Radio">
+        </a>
+    </section>
 
-  <section class="banner-promo">
-    <a href="http://www.epicentroradio.com/?utm_source=kino_resultados&utm_medium=banner_inferior&utm_campaign=cobertura_nacional" target="_blank">
-        <img src="https://primerosenlaquinta.cl/wp-content/uploads/2026/03/ChileybotanasconamarilloenfondorojoparaNegociodeSnacksLogo-ezgif.com-optimize.gif" alt="Escucha Epicentro Radio" width="300" height="250">
-    </a>
-  </section>
+    <footer style="text-align:center; padding: 20px; color:#999; font-size:12px;">
+        <p>Los resultados oficiales son los que Lotería entrega a sus Agentes.</p>
+    </footer>
 
-  <footer>
-    <p>ADVERTENCIA: Epicentrochile.com no es responsable en caso de que esta noticia contenga algún error u omisión. Los resultados oficiales son los que Lotería entrega a sus Agentes.</p>
-  </footer>
+    <script>
+        const SHEET_ID = "1a4XxgaYrixLeSQ0EOnI4thHA-_075uVAxQvvGlGhxQA";
+        const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+        const BASE_URL = "https://rustemah.github.io/kino-resultados/";
 
-  <script>
-    const SHEET_ID = "1a4XxgaYrixLeSQ0EOnI4thHA-_075uVAxQvvGlGhxQA";
-    const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
-    
-    // --- URL FIJA DE PRODUCCIÓN ---
-    const BASE_URL = "https://rustemah.github.io/kino-resultados/";
+        let ALL_DATA = [];
+        const IMAGENES = {
+            kino: "https://www.epicentrochile.com/wp-content/uploads/2026/02/kino2.png",
+            rekino: "https://www.epicentrochile.com/wp-content/uploads/2026/02/rekino.png",
+            requete_kino: "https://www.epicentrochile.com/wp-content/uploads/2026/02/requetekino.png",
+            premios_especiales: "https://www.epicentrochile.com/wp-content/uploads/2026/02/pe.png",
+            chao_jefe_2m: "https://www.epicentrochile.com/wp-content/uploads/2026/02/cj2.png",
+            chao_jefe_3m: "https://www.epicentrochile.com/wp-content/uploads/2026/02/cj3.png",
+            super_combo_marraqueta: "https://www.epicentrochile.com/wp-content/uploads/2026/02/supermarraqueta.png",
+            numero_carton: "https://www.epicentrochile.com/wp-content/uploads/2026/02/pc.png"
+        };
 
-    const contenedor = document.getElementById("resultados");
-    const selectSorteo = document.getElementById("selectSorteo");
-    const selectFecha = document.getElementById("selectFecha");
-    const bannerTexto = document.getElementById("bannerTexto");
-    const bannerMonto = document.getElementById("bannerMonto");
-    const btnEmbed = document.getElementById("btnEmbed");
-    const embedBox = document.getElementById("embedBox");
-    const embedCode = document.getElementById("embedCode");
-    const copyEmbed = document.getElementById("copyEmbed");
+        const params = new URLSearchParams(window.location.search);
+        if(params.get('embed') === '1') document.body.classList.add('is-embed');
 
-    let ALL_DATA = [];
+        fetch(URL).then(r => r.text()).then(text => {
+            const json = JSON.parse(text.match(/setResponse\(([\s\S]*?)\);?\s*$/)[1]);
+            ALL_DATA = json.table.rows.map(row => {
+                const v = (idx) => row.c[idx] ? row.c[idx].v : "";
+                return {
+                    sorteo: v(0).toString(),
+                    fecha: formatearFecha(v(1)),
+                    monto: v(2) || 0,
+                    numCarton: v(10),
+                    juegos: {
+                        kino: { nums: parseNums(v(3)), key: "kino" },
+                        rekino: { nums: parseNums(v(4)), key: "rekino" },
+                        requete_kino: { nums: parseNums(v(5)), key: "requete_kino" },
+                        premios_especiales: { nums: parseNums(v(6)), key: "premios_especiales" },
+                        chao_jefe_2m: { nums: parseNums(v(7)), key: "chao_jefe_2m" },
+                        chao_jefe_3m: { nums: parseNums(v(8)), key: "chao_jefe_3m" },
+                        super_combo: { nums: parseNums(v(9)), key: "super_combo_marraqueta" }
+                    }
+                };
+            }).filter(s => s.sorteo !== "").reverse();
 
-    const IMAGENES = {
-        kino: "https://www.epicentrochile.com/wp-content/uploads/2026/02/kino2.png",
-        rekino: "https://www.epicentrochile.com/wp-content/uploads/2026/02/rekino.png",
-        requete_kino: "https://www.epicentrochile.com/wp-content/uploads/2026/02/requetekino.png",
-        premios_especiales: "https://www.epicentrochile.com/wp-content/uploads/2026/02/pe.png",
-        chao_jefe_2m: "https://www.epicentrochile.com/wp-content/uploads/2026/02/cj2.png",
-        chao_jefe_3m: "https://www.epicentrochile.com/wp-content/uploads/2026/02/cj3.png",
-        super_combo_marraqueta: "https://www.epicentrochile.com/wp-content/uploads/2026/02/supermarraqueta.png",
-        numero_carton: "https://www.epicentrochile.com/wp-content/uploads/2026/02/pc.png"
-    };
-
-    // UI Embed
-    if(btnEmbed) btnEmbed.addEventListener("click", () => embedBox.hidden = !embedBox.hidden);
-    if(copyEmbed) {
-      copyEmbed.addEventListener("click", async () => {
-        try {
-          await navigator.clipboard.writeText(embedCode.value);
-          const original = copyEmbed.textContent; copyEmbed.textContent = "¡Copiado!";
-          setTimeout(() => copyEmbed.textContent = original, 1500);
-        } catch { embedCode.select(); }
-      });
-    }
-
-    // Carga de Datos
-    fetch(URL)
-      .then(r => r.text())
-      .then(text => {
-        const match = text.match(/setResponse\(([\s\S]*?)\);?\s*$/);
-        const json = match ? JSON.parse(match[1]) : JSON.parse(text.substring(47).slice(0, -2));
-
-        // PARSEO POR ÍNDICES FIJOS
-        ALL_DATA = json.table.rows.map(row => {
-          const v = (idx) => (row.c[idx] && row.c[idx].v !== null) ? row.c[idx].v : "";
-          
-          let sorteoRaw = v(0);
-          if (!sorteoRaw || isNaN(Number(sorteoRaw))) return null;
-
-          return {
-            sorteo: sorteoRaw.toString(),
-            fecha: formatearFecha(v(1)),
-            monto: normalizarMonto(v(2)),
-            numero_carton: v(10),
-            juegos: {
-              kino:               { nums: parseNums(v(3)), key: "kino" },
-              rekino:             { nums: parseNums(v(4)), key: "rekino" },
-              requete_kino:       { nums: parseNums(v(5)), key: "requete_kino" },
-              premios_especiales: { nums: parseNums(v(6)), key: "premios_especiales" },
-              chao_jefe_2m:       { nums: parseNums(v(7)), key: "chao_jefe_2m" },
-              chao_jefe_3m:       { nums: parseNums(v(8)), key: "chao_jefe_3m" },
-              super_combo:        { nums: parseNums(v(9)), key: "super_combo_marraqueta" }
+            cargarSelectores();
+            const sParam = params.get("sorteo");
+            const inicial = sParam ? ALL_DATA.find(s => s.sorteo === sParam) : ALL_DATA[0];
+            
+            if(inicial) {
+                document.getElementById('selectSorteo').value = inicial.sorteo;
+                actualizar(inicial);
             }
-          };
-        })
-        .filter(Boolean)
-        .sort((a, b) => Number(b.sorteo) - Number(a.sorteo));
+        });
 
-        if (ALL_DATA.length === 0) { 
-            mostrarAvisoManual(); 
-            return; 
+        function parseNums(v) {
+            return v ? v.toString().split(/[\n,]+/).map(n => n.trim()).filter(n => n !== "") : [];
         }
 
-        cargarSelectores(ALL_DATA);
-
-        const params = new URLSearchParams(location.search);
-        if (params.get("embed") === "1") document.body.classList.add("is-embed");
-        
-        const sorteoParam = params.get("sorteo");
-        
-        if (sorteoParam) {
-           selectSorteo.value = sorteoParam;
-           aplicarFiltros();
-        } else {
-           // CAMBIO CLAVE: Cargar SIEMPRE el primero de la lista (el 3198)
-           // aunque no tenga bolitas, para mostrar su fecha y pozo.
-           cargarUltimo();
-        }
-      })
-      .catch(e => { 
-          console.error("Error técnico:", e); 
-          mostrarAvisoManual(); 
-      });
-
-    // --- FUNCIÓN UNIFICADA DE MENSAJE "NO DISPONIBLE" ---
-    function mostrarAvisoManual() {
-       contenedor.innerHTML = `
-         <div class="no-resultados">
-            <strong>Resultados no disponibles aún.</strong>
-            Consulte más tarde.
-         </div>`;
-       bannerTexto.textContent = "Sin Información";
-       bannerMonto.textContent = "---";
-    }
-
-    // CAMBIO CLAVE: Cargar el primero tal cual viene
-    function cargarUltimo() {
-        let sorteoElegido = ALL_DATA[0]; // Toma el más reciente (ej. 3198)
-        
-        // Sincronizar selectores
-        selectSorteo.value = sorteoElegido.sorteo;
-        selectFecha.value = sorteoElegido.fecha;
-        
-        // Renderizar banner (Sorteo + Fecha + Pozo)
-        renderBanner(sorteoElegido);
-
-        // Renderizar tarjeta (Mostrará "No disponible" si no tiene bolitas)
-        render([sorteoElegido]);
-        
-        // Embed automático
-        actualizarEmbed(null);
-    }
-
-    function aplicarFiltros() {
-      const sVal = selectSorteo.value;
-      const fVal = selectFecha.value;
-      const filtrado = ALL_DATA.filter(s => (!sVal || s.sorteo === sVal) && (!fVal || s.fecha === fVal));
-      
-      if (filtrado.length) {
-        render(filtrado);
-        renderBanner(filtrado[0]);
-        actualizarEmbed(filtrado[0].sorteo);
-        
-        const url = new URL(window.location);
-        url.searchParams.set("sorteo", filtrado[0].sorteo);
-        if(url.searchParams.get("embed") !== "1") url.searchParams.delete("embed");
-        history.replaceState({}, "", url);
-        
-        if (sVal) selectFecha.value = filtrado[0].fecha;
-      } else {
-        mostrarAvisoManual();
-      }
-    }
-
-    function actualizarEmbed(sorteoId) {
-      const src = sorteoId 
-        ? `${BASE_URL}?sorteo=${sorteoId}&embed=1` 
-        : `${BASE_URL}?embed=1`;
-      embedCode.value = `<iframe src="${src}" width="100%" height="1300" style="border:0;border-radius:12px;overflow:hidden" loading="lazy"></iframe>`;
-      btnEmbed.disabled = false;
-    }
-
-    function parseNums(v) {
-      if (!v) return [];
-      const str = v.toString().trim();
-      if (!str) return [];
-      return str.split(/[\n,]+/).map(n => n.trim()).filter(n => n !== "");
-    }
-
-    function chunkArray(arr, size) {
-      const chunks = [];
-      for (let i = 0; i < arr.length; i += size) chunks.push(arr.slice(i, i + size));
-      return chunks;
-    }
-
-    function formatearFecha(f) {
-      if (!f) return "";
-      // Si viene como string YYYY-MM-DD (del CSV directo) lo invertimos
-      if (typeof f === "string" && f.match(/^\d{4}-\d{2}-\d{2}$/)) {
-         const parts = f.split("-");
-         return `${parts[2]}-${parts[1]}-${parts[0]}`; // DD-MM-YYYY
-      }
-      // Si viene como Date(Y,M,D) (de Google Viz)
-      if (typeof f === "string" && f.startsWith("Date")) {
-        const c = f.match(/\d+/g);
-        return c ? `${c[2].padStart(2,'0')}-${(parseInt(c[1])+1).toString().padStart(2,'0')}-${c[0]}` : f;
-      }
-      return f;
-    }
-
-    function normalizarMonto(m) {
-      if (!m) return 0;
-      return Number(m.toString().replace(/[^\d]/g, "")) || 0;
-    }
-
-    function nombreCategoria(key) {
-      const map = {
-        kino: "Kino", rekino: "Rekino", requete_kino: "Requete Kino",
-        premios_especiales: "Premios Especiales", chao_jefe_2m: "Chao Jefe $2M",
-        chao_jefe_3m: "Chao Jefe $3M", super_combo_marraqueta: "Super Combo Marraqueta"
-      };
-      return map[key] || key.toUpperCase();
-    }
-
-    function cargarSelectores(data) {
-      selectSorteo.innerHTML = `<option value="">Selecciona sorteo</option>` + 
-        data.map(s => `<option value="${s.sorteo}">${s.sorteo}</option>`).join("");
-      const fechas = [...new Set(data.map(s => s.fecha))];
-      selectFecha.innerHTML = `<option value="">Selecciona fecha</option>` + 
-        fechas.map(f => `<option value="${f}">${f}</option>`).join("");
-      selectSorteo.onchange = selectFecha.onchange = aplicarFiltros;
-    }
-
-    function render(data) {
-      contenedor.innerHTML = "";
-      data.forEach(s => {
-        let html = `<div class="card">
-          <div class="card-header">
-            <h2>Sorteo KINO ${s.sorteo}</h2>
-            <small>${s.fecha}</small>
-          </div>`;
-          
-        let juegosMostrados = 0;
-
-        for (const [key, juego] of Object.entries(s.juegos)) {
-          if (!juego.nums.length) continue; 
-          juegosMostrados++;
-          const logoUrl = IMAGENES[juego.key];
-          const grupos = chunkArray(juego.nums, 14);
-          html += `<div class="juego-bloque">
-            <h3>${logoUrl ? `<img src="${logoUrl}">` : '🔹'} ${nombreCategoria(juego.key)}</h3>`;
-          grupos.forEach(grupo => {
-            html += `<div class="bolas grupo">${grupo.map(n => `<div class="bola">${n}</div>`).join("")}</div>`;
-          });
-          html += `</div>`;
+        function formatearFecha(f) {
+            if(!f) return "";
+            if(f.toString().startsWith("Date")) {
+                const c = f.match(/\d+/g);
+                return `${c[2].padStart(2,'0')}-${(parseInt(c[1])+1).toString().padStart(2,'0')}-${c[0]}`;
+            }
+            return f;
         }
 
-        if (s.numero_carton) {
-           juegosMostrados++;
-           const logoPC = IMAGENES["numero_carton"];
-           html += `<div class="juego-bloque">
-             <h3><img src="${logoPC}"> Premios al N° de Cartón</h3>
-             <div class="cartones">${s.numero_carton.toString().split(",").map(c => `<span class="carton">${c.trim()}</span>`).join("")}</div>
-           </div>`;
+        function cargarSelectores() {
+            const sSel = document.getElementById('selectSorteo');
+            sSel.innerHTML = ALL_DATA.map(s => `<option value="${s.sorteo}">${s.sorteo}</option>`).join('');
+            sSel.onchange = () => actualizar(ALL_DATA.find(s => s.sorteo === sSel.value));
         }
 
-        // CAMBIO: Si no hay juegos, NO mostrar la tarjeta vacía, sino el mensaje
-        if (juegosMostrados === 0) {
-           html += `
-             <div class="no-resultados">
-                <strong>Resultados no disponibles aún.</strong>
-                Consulte más tarde.
-             </div>`;
-        }
-        
-        html += `</div>`;
-        contenedor.innerHTML += html;
-      });
-    }
+        function actualizar(s) {
+            document.getElementById('bannerTexto').textContent = `Sorteo ${s.sorteo} - ${s.fecha}`;
+            document.getElementById('bannerMonto').textContent = "$" + s.monto.toLocaleString("es-CL");
+            
+            let html = `<div class="card"><div class="card-header"><h2>Sorteo ${s.sorteo}</h2><small>${s.fecha}</small></div>`;
+            let tieneDatos = false;
 
-    function renderBanner(s) {
-      // AQUÍ ESTÁ EL CAMBIO VISUAL:
-      // Muestra "Resultados Sorteo FECHA" incluso si no hay bolitas
-      bannerTexto.textContent = `Resultados Sorteo ${s.fecha}`;
-      bannerMonto.textContent = "$" + s.monto.toLocaleString("es-CL");
-    }
-  </script>
+            for (const [key, juego] of Object.entries(s.juegos)) {
+                if(juego.nums.length) {
+                    tieneDatos = true;
+                    html += `<div class="juego-bloque"><h3><img src="${IMAGENES[juego.key]}"> ${key.toUpperCase()}</h3><div class="bolas">${juego.nums.map(n => `<div class="bola">${n}</div>`).join('')}</div></div>`;
+                }
+            }
+
+            if(s.numCarton) {
+                tieneDatos = true;
+                html += `<div class="juego-bloque"><h3><img src="${IMAGENES.numero_carton}"> CARTÓN</h3><p>${s.numCarton}</p></div>`;
+            }
+
+            if(!tieneDatos) {
+                html += `<div class="no-resultados"><strong>Resultados no disponibles aún.</strong> Consulte más tarde.</div>`;
+            }
+
+            html += `</div>`;
+            document.getElementById('resultados').innerHTML = html;
+        }
+
+        function copiarEmbed() {
+            const s = document.getElementById('selectSorteo').value;
+            const code = `<iframe src="${BASE_URL}?sorteo=${s}&embed=1" width="100%" height="1300" style="border:0; border-radius:12px; overflow:hidden;" loading="lazy"></iframe>`;
+            navigator.clipboard.writeText(code).then(() => alert("Embed copiado"));
+        }
+    </script>
 </body>
 </html>
