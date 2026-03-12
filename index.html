@@ -5,7 +5,7 @@
     <title>Resultados Kino - Epicentro Chile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
-        :root { --azul: #003b8e; --rojo: #e20613; --dorado: #ffd400; --fondo: #f4f6f8; }
+        :root { --azul: #003b8e; --rojo: #e20613; --dorado: #ffd400; --fondo: #f4f6f8; --verde: #28a745; }
         body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--fondo); color: #333; }
 
         /* BANNER SUPERIOR */
@@ -26,11 +26,10 @@
         .banner-monto .monto { font-size: 3.5rem; font-weight: 800; line-height: 1; text-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         .banner-monto .millones { font-size: 1.5rem; font-weight: 600; opacity: 0.9; display: block; margin-top: 5px; }
 
-        /* CONTROLES */
+        /* CONTROLES ADMIN */
         .admin-controls { display: flex; gap: 10px; justify-content: center; padding: 20px; flex-wrap: wrap; }
         select { padding: 12px 16px; font-size: 15px; border: 1px solid #ddd; border-radius: 8px; min-width: 180px; background: white; cursor: pointer; }
-        .btn-copy { padding: 12px 20px; background: #333; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; }
-        .btn-copy:hover { background: #000; }
+        .btn-copy { padding: 12px 20px; background: #333; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
 
         /* RESULTADOS */
         .card { background: #ffffff; max-width: 750px; margin: 20px auto; padding: 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
@@ -43,22 +42,26 @@
         h3 { display: flex; align-items: center; gap: 10px; margin: 0 0 15px 0; color: #444; font-size: 1.1rem; }
         h3 img { height: 35px; width: auto; object-fit: contain; }
 
-        .bolas { display: flex; flex-wrap: wrap; gap: 8px; }
+        .bolas-fila { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
         .bola {
-            width: 40px; height: 40px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #ffd700, #ffca28); color: #333; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 2px solid #fff;
+            width: 40px; height: 40px; border-radius: 50%; 
+            background: radial-gradient(circle at 30% 30%, #ffd700, #ffca28); 
+            color: #333; display: flex; align-items: center; justify-content: center; 
+            font-weight: 800; font-size: 1.2rem; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 2px solid #fff;
         }
 
-        .no-resultados { text-align: center; padding: 30px; background: #fff3f3; border-radius: 8px; border: 1px dashed #ffbbc9; color: #d50057; margin-top: 10px; }
+        .no-resultados { text-align: center; padding: 30px; background: #fff3f3; border-radius: 8px; border: 1px dashed #ffbbc9; color: #d50057; }
 
         /* PUBLICIDAD */
         .banner-promo { max-width: 500px; margin: 30px auto; text-align: center; }
-        .banner-promo img { max-width: 100%; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: 0.3s; }
-        .banner-promo img:hover { transform: translateY(-3px); }
+        .banner-promo img { max-width: 100%; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
 
         /* MODO EMBED */
         body.is-embed .admin-controls, body.is-embed footer { display: none !important; }
         body.is-embed .banner-oficial { margin: 0; border-radius: 0; }
         body.is-embed .card { margin: 10px auto; box-shadow: none; border: 1px solid #eee; }
+
+        @media (max-width: 500px) { .banner-monto .monto { font-size: 2.5rem; } }
     </style>
 </head>
 <body>
@@ -76,8 +79,7 @@
     </section>
 
     <section class="admin-controls">
-        <select id="selectSorteo"><option value="">Sorteo</option></select>
-        <select id="selectFecha"><option value="">Fecha</option></select>
+        <select id="selectSorteo"><option value="">Seleccionar Sorteo</option></select>
         <button class="btn-copy" onclick="copiarEmbed()">Copiar Embed</button>
     </section>
 
@@ -89,16 +91,14 @@
         </a>
     </section>
 
-    <footer style="text-align:center; padding: 20px; color:#999; font-size:12px;">
-        <p>Los resultados oficiales son los que Lotería entrega a sus Agentes.</p>
-    </footer>
-
     <script>
         const SHEET_ID = "1a4XxgaYrixLeSQ0EOnI4thHA-_075uVAxQvvGlGhxQA";
-        const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+        const URL_JSON = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
         const BASE_URL = "https://rustemah.github.io/kino-resultados/";
 
         let ALL_DATA = [];
+        let ACTUAL = null;
+
         const IMAGENES = {
             kino: "https://www.epicentrochile.com/wp-content/uploads/2026/02/kino2.png",
             rekino: "https://www.epicentrochile.com/wp-content/uploads/2026/02/rekino.png",
@@ -106,14 +106,15 @@
             premios_especiales: "https://www.epicentrochile.com/wp-content/uploads/2026/02/pe.png",
             chao_jefe_2m: "https://www.epicentrochile.com/wp-content/uploads/2026/02/cj2.png",
             chao_jefe_3m: "https://www.epicentrochile.com/wp-content/uploads/2026/02/cj3.png",
-            super_combo_marraqueta: "https://www.epicentrochile.com/wp-content/uploads/2026/02/supermarraqueta.png",
+            super_combo: "https://www.epicentrochile.com/wp-content/uploads/2026/02/supermarraqueta.png",
             numero_carton: "https://www.epicentrochile.com/wp-content/uploads/2026/02/pc.png"
         };
 
         const params = new URLSearchParams(window.location.search);
+        const sorteoUrl = params.get('sorteo');
         if(params.get('embed') === '1') document.body.classList.add('is-embed');
 
-        fetch(URL).then(r => r.text()).then(text => {
+        fetch(URL_JSON).then(r => r.text()).then(text => {
             const json = JSON.parse(text.match(/setResponse\(([\s\S]*?)\);?\s*$/)[1]);
             ALL_DATA = json.table.rows.map(row => {
                 const v = (idx) => row.c[idx] ? row.c[idx].v : "";
@@ -123,30 +124,19 @@
                     monto: v(2) || 0,
                     numCarton: v(10),
                     juegos: {
-                        kino: { nums: parseNums(v(3)), key: "kino" },
-                        rekino: { nums: parseNums(v(4)), key: "rekino" },
-                        requete_kino: { nums: parseNums(v(5)), key: "requete_kino" },
-                        premios_especiales: { nums: parseNums(v(6)), key: "premios_especiales" },
-                        chao_jefe_2m: { nums: parseNums(v(7)), key: "chao_jefe_2m" },
-                        chao_jefe_3m: { nums: parseNums(v(8)), key: "chao_jefe_3m" },
-                        super_combo: { nums: parseNums(v(9)), key: "super_combo_marraqueta" }
+                        kino: v(3), rekino: v(4), requete_kino: v(5),
+                        premios_especiales: v(6), chao_jefe_2m: v(7),
+                        chao_jefe_3m: v(8), super_combo: v(9)
                     }
                 };
             }).filter(s => s.sorteo !== "").reverse();
 
-            cargarSelectores();
-            const sParam = params.get("sorteo");
-            const inicial = sParam ? ALL_DATA.find(s => s.sorteo === sParam) : ALL_DATA[0];
-            
-            if(inicial) {
-                document.getElementById('selectSorteo').value = inicial.sorteo;
-                actualizar(inicial);
-            }
-        });
+            const sel = document.getElementById('selectSorteo');
+            sel.innerHTML = ALL_DATA.map(s => `<option value="${s.sorteo}">Sorteo ${s.sorteo}</option>`).join('');
 
-        function parseNums(v) {
-            return v ? v.toString().split(/[\n,]+/).map(n => n.trim()).filter(n => n !== "") : [];
-        }
+            ACTUAL = sorteoUrl ? ALL_DATA.find(s => s.sorteo === sorteoUrl) : ALL_DATA[0];
+            if (ACTUAL) { sel.value = ACTUAL.sorteo; render(); }
+        });
 
         function formatearFecha(f) {
             if(!f) return "";
@@ -157,43 +147,57 @@
             return f;
         }
 
-        function cargarSelectores() {
-            const sSel = document.getElementById('selectSorteo');
-            sSel.innerHTML = ALL_DATA.map(s => `<option value="${s.sorteo}">${s.sorteo}</option>`).join('');
-            sSel.onchange = () => actualizar(ALL_DATA.find(s => s.sorteo === sSel.value));
+        // Función clave: Separa los números por líneas (usando ";" o saltos de línea)
+        function procesarLineas(texto) {
+            if (!texto) return [];
+            return texto.toString().split(/[;\n]+/).map(linea => {
+                return linea.split(/[,]+/).map(n => n.trim()).filter(n => n !== "");
+            }).filter(grupo => grupo.length > 0);
         }
 
-        function actualizar(s) {
-            document.getElementById('bannerTexto').textContent = `Sorteo ${s.sorteo} - ${s.fecha}`;
-            document.getElementById('bannerMonto').textContent = "$" + s.monto.toLocaleString("es-CL");
+        function render() {
+            document.getElementById('bannerTexto').textContent = `Sorteo ${ACTUAL.sorteo} - ${ACTUAL.fecha}`;
+            document.getElementById('bannerMonto').textContent = "$" + ACTUAL.monto.toLocaleString("es-CL");
             
-            let html = `<div class="card"><div class="card-header"><h2>Sorteo ${s.sorteo}</h2><small>${s.fecha}</small></div>`;
+            const cont = document.getElementById('resultados');
+            let html = `<div class="card"><div class="card-header"><h2>Sorteo N° ${ACTUAL.sorteo}</h2><small>${ACTUAL.fecha}</small></div>`;
             let tieneDatos = false;
 
-            for (const [key, juego] of Object.entries(s.juegos)) {
-                if(juego.nums.length) {
+            for (const [key, rawValue] of Object.entries(ACTUAL.juegos)) {
+                const grupos = procesarLineas(rawValue);
+                if(grupos.length) {
                     tieneDatos = true;
-                    html += `<div class="juego-bloque"><h3><img src="${IMAGENES[juego.key]}"> ${key.toUpperCase()}</h3><div class="bolas">${juego.nums.map(n => `<div class="bola">${n}</div>`).join('')}</div></div>`;
+                    html += `<div class="juego-bloque"><h3><img src="${IMAGENES[key]}"> ${key.replace('_',' ').toUpperCase()}</h3>`;
+                    grupos.forEach((grupo, i) => {
+                        const label = grupos.length > 1 ? `<div style="font-size:11px; color:#888; margin-bottom:4px;">Sorteo ${i+1}</div>` : '';
+                        html += `${label}<div class="bolas-fila">${grupo.map(n => `<div class="bola">${n}</div>`).join('')}</div>`;
+                    });
+                    html += `</div>`;
                 }
             }
 
-            if(s.numCarton) {
+            if(ACTUAL.numCarton) {
                 tieneDatos = true;
-                html += `<div class="juego-bloque"><h3><img src="${IMAGENES.numero_carton}"> CARTÓN</h3><p>${s.numCarton}</p></div>`;
+                html += `<div class="juego-bloque"><h3><img src="${IMAGENES.numero_carton}"> N° DE CARTÓN</h3><div style="font-weight:bold; font-size:1.1rem; color:var(--azul);">${ACTUAL.numCarton}</div></div>`;
             }
 
             if(!tieneDatos) {
-                html += `<div class="no-resultados"><strong>Resultados no disponibles aún.</strong> Consulte más tarde.</div>`;
+                html += `<div class="no-resultados"><strong>Resultados no disponibles aún.</strong><br>Consulte más tarde.</div>`;
             }
 
             html += `</div>`;
-            document.getElementById('resultados').innerHTML = html;
+            cont.innerHTML = html;
         }
+
+        document.getElementById('selectSorteo').onchange = (e) => {
+            ACTUAL = ALL_DATA.find(s => s.sorteo === e.target.value);
+            render();
+        };
 
         function copiarEmbed() {
             const s = document.getElementById('selectSorteo').value;
             const code = `<iframe src="${BASE_URL}?sorteo=${s}&embed=1" width="100%" height="1300" style="border:0; border-radius:12px; overflow:hidden;" loading="lazy"></iframe>`;
-            navigator.clipboard.writeText(code).then(() => alert("Embed copiado"));
+            navigator.clipboard.writeText(code).then(() => alert("Código Embed copiado para el sorteo " + s));
         }
     </script>
 </body>
